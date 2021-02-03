@@ -1,0 +1,18 @@
+- name: "CREATE TICKET | {{ ticket_short_description }}"
+  snow_record:
+       username: "{{ snow_username }}"
+       password: "{{ snow_password }}"
+       instance: "{{ snow_instance }}"
+       state: present
+       table: "incident"
+       data:
+          short_description: "{{ ticket_short_description }}"
+          impact: "{{ snow_impact }}"
+          urgency: "{{ snow_urgency }}"
+          assignment_group: "{{ tkt_assignment_group }}"
+          description: "{{ ticket_full_description }}"
+  register: new_incident
+- debug:
+    var: new_incident
+
+

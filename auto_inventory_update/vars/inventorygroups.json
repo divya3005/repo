@@ -1,0 +1,14 @@
+{
+    "windows": [
+      "tcv_grp_cred_windows",
+      "tcv_grp_access_hc",
+      "tcv_grp_access_event"
+    ],
+    "linux": [
+      "tcv_grp_cred_windows",
+      "tcv_grp_access_hc",
+      "tcv_grp_access_event",
+      "tcv_grp_acccess_patchscan",
+      "tcv_grp_ud_windows"
+      ]
+}

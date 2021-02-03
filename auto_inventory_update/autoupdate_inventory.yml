@@ -1,0 +1,84 @@
+--- 
+- hosts: localhost
+  connection: local
+  vars:
+      tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
+      tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'  
+  tasks:
+   - name: Inlcude the Group Details
+     include_vars: 
+      file: inventorygroups.json
+      name: inv_Groups 
+   - name: Inlcude the vars
+     include_vars: inputs.yml
+   - set_fact:
+        location_proxy: "{{loc_proxy_prefix}}{{ locations[ region ].value }}"
+
+   - name: Identify the environment details
+     set_fact:
+        grp_env: "{{env_prefix}}production"
+     when: host_name|int > 0 and host_name|int <= 400  
+   - name: Identify the environment details
+     set_fact:
+        grp_env: "{{env_prefix}}non_production"
+     when: host_name|int > 400         
+   - name: Group all the inventory
+     set_fact:
+        inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
+         
+   - name: "Fetch the Group ID's"
+     uri:
+        url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
+        body_format: json
+        method: GET
+        user: "{{ tower_username }}"
+        password: "{{ tower_password }}"
+        force_basic_auth: true
+        return_content: true
+        status_code: 200  
+        validate_certs: no 
+     loop: "{{ inv_groups }}"
+     loop_control:
+         loop_var: group_name  
+     register: response_groupId    
+    
+   - name : "Create & Update Ansible Tower Inventory with new hosts & Groups"
+     uri:
+        url: "{{ instance_name }}/api/v2/groups/{{ inv_groupsId }}/hosts/"  
+        body_format: json
+        method: POST
+        user: "{{ tower_username }}"
+        password: "{{ tower_password }}"
+        force_basic_auth: true
+        body: '{ "name" : "{{ fqdn }}" , "description" : "Uploaded from VRO" }'
+        validate_certs: no  
+        status_code: 201,204 
+     register: inv_update 
+     loop: "{{ response_groupId | json_query('results[].json.results[*].id') | flatten(1) }}"
+     loop_control:
+        loop_var: inv_groupsId
+   
+   - name: Update the Host Variables 
+     uri:
+        url: "{{ instance_name }}{{ inv_update.results[0].json.related.variable_data }}"
+        user: "{{ tower_username }}"
+        password: "{{ tower_password }}"
+        method: PUT
+        body: '{ "ansible_host": "{{ ansible_host }}" , 
+                   "devicetype" : "{{ devicetype }}" , 
+                   "ostype": "{{ os_type }}" ,
+                   "tier" : "{{ tier }}",
+                   "ipaddress" : "{{ ansible_host }}" ,
+                   "fqdn" : "{{ fqdn }}" }'
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+        validate_certs: no
+
+   - name: CREATE TICKET
+     include_role:
+        name: create_ticket
+     vars:
+          ticket_short_description: "This is from AT"
+          ticket_full_description: "From AT-Personal"
+        
