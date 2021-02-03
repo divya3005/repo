@@ -1,7 +1,7 @@
 instance_name: "https://10.0.15.25"
 loc_proxy_prefix: "tcv_grp_sshproxy_jh2_"
 env_prefix: "tcv_grp_ud_"
-inventory_id: "5"   #UID of the MAster inventory
+inventory_id: "3"   #UID of the MAster inventory
 host_name: "{{ fqdn.split('.')[0][-3:] }}"
 snow_impact: "3"
 snow_urgency: "3"
