@@ -1,4 +1,4 @@
-instance_name: "https://10.0.15.25"
+instance_name: "http://192.168.33.34"
 loc_proxy_prefix: "tcv_grp_sshproxy_jh2_"
 env_prefix: "tcv_grp_ud_"
 inventory_id: "3"   #UID of the MAster inventory
