@@ -13,11 +13,14 @@
      include_vars: inputs.yml
    - set_fact:
         location_proxy: "{{loc_proxy_prefix}}{{ locations[ region ].value }}"
-
+   - debug:
+       msg: "{{ location_proxy }}"
    - name: Identify the environment details
      set_fact:
         grp_env: "{{env_prefix}}production"
-     when: host_name|int > 0 and host_name|int <= 400  
+     when: host_name|int > 0 and host_name|int <= 400
+   - debug:
+       msg: "{{ grp_env }}"  
    - name: Identify the environment details
      set_fact:
         grp_env: "{{env_prefix}}non_production"
@@ -25,6 +28,8 @@
    - name: Group all the inventory
      set_fact:
         inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
+   - debug:
+       msg: "{{ inv_groups }}"     
          
    - name: "Fetch the Group ID's"
      uri:
@@ -41,7 +46,7 @@
      loop_control:
          loop_var: group_name  
      register: response_groupId    
-     when: inv_groups is defined and inv_groups[os_type] | length != 0
+     when: inv_Groups[os_type] is defined and inv_Groups[os_type] | length != 0
 #    - name : "Create & Update Ansible Tower Inventory with new hosts & Groups"
 #      uri:
 #         url: "{{ instance_name }}/api/v2/groups/{{ inv_groupsId }}/hosts/"  
