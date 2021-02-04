@@ -4,7 +4,7 @@
   tasks:
   - name: variable declaration
     include_vars: 
-      file: invGroups_1.json
+      file: inventorygroups.json
       name: tec_inv_Groups
    
   - name: OS type is other than Windows or Linux
