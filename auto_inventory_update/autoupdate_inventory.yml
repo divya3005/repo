@@ -41,44 +41,44 @@
      loop_control:
          loop_var: group_name  
      register: response_groupId    
-    
-   - name : "Create & Update Ansible Tower Inventory with new hosts & Groups"
-     uri:
-        url: "{{ instance_name }}/api/v2/groups/{{ inv_groupsId }}/hosts/"  
-        body_format: json
-        method: POST
-        user: "{{ tower_username }}"
-        password: "{{ tower_password }}"
-        force_basic_auth: true
-        body: '{ "name" : "{{ fqdn }}" , "description" : "Uploaded from VRO" }'
-        validate_certs: no  
-        status_code: 201,204 
-     register: inv_update 
-     loop: "{{ response_groupId | json_query('results[].json.results[*].id') | flatten(1) }}"
-     loop_control:
-        loop_var: inv_groupsId
+     when: inv_Groups[os_type] is defined and inv_Groups[os_type] | length != 0
+#    - name : "Create & Update Ansible Tower Inventory with new hosts & Groups"
+#      uri:
+#         url: "{{ instance_name }}/api/v2/groups/{{ inv_groupsId }}/hosts/"  
+#         body_format: json
+#         method: POST
+#         user: "{{ tower_username }}"
+#         password: "{{ tower_password }}"
+#         force_basic_auth: true
+#         body: '{ "name" : "{{ fqdn }}" , "description" : "Uploaded from VRO" }'
+#         validate_certs: no  
+#         status_code: 201,204 
+#      register: inv_update 
+#      loop: "{{ response_groupId | json_query('results[].json.results[*].id') | flatten(1) }}"
+#      loop_control:
+#         loop_var: inv_groupsId
    
-   - name: Update the Host Variables 
-     uri:
-        url: "{{ instance_name }}{{ inv_update.results[0].json.related.variable_data }}"
-        user: "{{ tower_username }}"
-        password: "{{ tower_password }}"
-        method: PUT
-        body: '{ "ansible_host": "{{ ansible_host }}" , 
-                   "devicetype" : "{{ devicetype }}" , 
-                   "ostype": "{{ os_type }}" ,
-                   "tier" : "{{ tier }}",
-                   "ipaddress" : "{{ ansible_host }}" ,
-                   "fqdn" : "{{ fqdn }}" }'
-        force_basic_auth: yes
-        status_code: 200
-        body_format: json
-        validate_certs: no
+#    - name: Update the Host Variables 
+#      uri:
+#         url: "{{ instance_name }}{{ inv_update.results[0].json.related.variable_data }}"
+#         user: "{{ tower_username }}"
+#         password: "{{ tower_password }}"
+#         method: PUT
+#         body: '{ "ansible_host": "{{ ansible_host }}" , 
+#                    "devicetype" : "{{ devicetype }}" , 
+#                    "ostype": "{{ os_type }}" ,
+#                    "tier" : "{{ tier }}",
+#                    "ipaddress" : "{{ ansible_host }}" ,
+#                    "fqdn" : "{{ fqdn }}" }'
+#         force_basic_auth: yes
+#         status_code: 200
+#         body_format: json
+#         validate_certs: no
 
-   - name: CREATE TICKET
-     include_role:
-        name: create_ticket
-     vars:
-          ticket_short_description: "This is from AT"
-          ticket_full_description: "From AT-Personal"
+#    - name: CREATE TICKET
+#      include_role:
+#         name: create_ticket
+#      vars:
+#           ticket_short_description: "This is from AT"
+#           ticket_full_description: "From AT-Personal"
         
