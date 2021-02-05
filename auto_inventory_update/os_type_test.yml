@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: variable declaration
+    include_vars: 
+      file: invGroups_1.json
+      name: tec_inv_Groups
+   
+  - name: OS type is other than Windows or Linux
+    debug: 
+      msg: "{{ os }}"
+    when: tec_inv_Groups[os] is defined and tec_inv_Groups[os] | length 
+      
