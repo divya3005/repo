@@ -22,13 +22,12 @@
      set_fact:
         grp_env: "{{env_prefix}}non_production"
      when: host_name|int > 400    
-   - debug:
-       msg: "{{ location_proxy }}"  
-     when: location_proxy is defined        
+    
+             
    - name: Group all the inventory
      set_fact:
         inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
-     when: inv_Groups[os_type] is defined and inv_Groups[os_type] | length > 0  
+     when: inv_Groups[os_type] is defined and inv_Groups[os_type] | length > 0 and location_proxy is defined 
 
    - name: "Fetch the Group ID's"
      uri:
