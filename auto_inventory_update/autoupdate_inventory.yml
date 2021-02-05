@@ -84,4 +84,4 @@
      vars:
           ticket_short_description: "This is from AT"
           ticket_full_description: "From AT-Personal"
-        
+     when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined   
