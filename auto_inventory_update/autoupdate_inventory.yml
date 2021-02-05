@@ -25,7 +25,10 @@
    - name: Group all the inventory
      set_fact:
         inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
-         
+   - debug: 
+       msg: "{{ os_type }}"
+    when: inv_Groups[os_type] is defined and inv_Groups[os_type] | length > 0   
+
    - name: "Fetch the Group ID's"
      uri:
         url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
