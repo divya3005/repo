@@ -33,7 +33,7 @@
 
       - name: "Fetch the master inventory id"
         uri:
-          url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" #{{ inventory_name}}
+          url: "{{ instance_name }}/api/v2/inventories/?name={{ inventory_name}}" 
           body_format: json
           method: GET
           user: "{{ tower_username }}"
