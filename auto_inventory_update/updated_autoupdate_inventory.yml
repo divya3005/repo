@@ -33,7 +33,7 @@
 
       - name: "Fetch the master inventory id"
         uri:
-          url: "{{ instance_name }}/api/v2/inventories/?name={{ inventory_name}}" 
+          url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
           body_format: json
           method: GET
           user: "{{ tower_username }}"
@@ -41,14 +41,12 @@
           force_basic_auth: true
           return_content: true
           status_code: 200 
-        register: master_inv_id   
-       
-
+        register: master_inv_id
+           
       - name: "Required master inventory id"
         set_fact:
           inventory_id: "{{ master_inv_id.json.results[0].id }}"
-               
-
+          
       - name: "Validate if the hosts already exist in Inventory"
         uri:
           url: "{{ instance_name }}/api/v2/inventories/{{ inventory_id }}/hosts/?&name={{ fqdn }}" 
@@ -61,6 +59,7 @@
           status_code: 200  
           validate_certs: no 
         register: response_hostId
+        when: inventory_id is defined and inventory_id != ""
      
       - name: "Validate if hosts exist and poluate the api url"
         set_fact:
