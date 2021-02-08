@@ -1,15 +1,15 @@
 --- 
 - hosts: localhost
   connection: local
-tasks:
-- name: Update the Host Variables 
-  uri:
-    url: "http://192.168.33.34/api/v2/groups/?inventory=3&name=tcv_cred_windows"
-    user: admin
-    password: divya921997
-    method: PUT
-    body: '{ hello  }'
-    force_basic_auth: yes
-    status_code: 200
-    body_format: json
-    validate_certs: no
+  tasks:
+    - name: Update the Host Variables 
+      uri:
+        url: "http://192.168.33.34/api/v2/groups/?inventory=3&name=tcv_cred_windows"
+        user: admin
+        password: divya921997
+        method: PUT
+        body: '{ hello  }'
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+        validate_certs: no
