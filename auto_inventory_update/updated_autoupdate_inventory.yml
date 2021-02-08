@@ -31,6 +31,24 @@
           inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
         when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
 
+      - name: "Fetch the master inventory id"
+        uri:
+          url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" #{{ inventory_name}}
+          body_format: json
+          method: GET
+          user: "{{ tower_username }}"
+          password: "{{ tower_password }}"
+          force_basic_auth: true
+          return_content: true
+          status_code: 200 
+        register: master_inv_id   
+       
+
+      - name: "Required master inventory id"
+        set_fact:
+          inventory_id: "{{ master_inv_id.json.results[0].id }}"
+               
+
       - name: "Validate if the hosts already exist in Inventory"
         uri:
           url: "{{ instance_name }}/api/v2/inventories/{{ inventory_id }}/hosts/?&name={{ fqdn }}" 
