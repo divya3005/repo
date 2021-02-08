@@ -4,7 +4,7 @@
   tasks:
       - name: "Fetch the master inventory id"
         uri:
-          url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" 
+          url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" #{{ inventory_name}}
           body_format: json
           method: GET
           user: admin
