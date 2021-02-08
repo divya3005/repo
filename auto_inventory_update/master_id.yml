@@ -1,0 +1,17 @@
+--- 
+- hosts: localhost
+  connection: local
+  tasks:
+      - name: "Fetch the Group ID's"
+        uri:
+          url: "http://192.168.33.34/api/v2/inventories/?name=tec_inv" 
+          body_format: json
+          method: GET
+          user: admin
+          password: divya921997
+          force_basic_auth: true
+          return_content: true
+          status_code: 200 
+        register: response    
+      - debug:
+          var: response  
