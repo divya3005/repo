@@ -4,7 +4,7 @@
   tasks:
       - name: "Fetch the master inventory id"
         uri:
-          url: "http://192.168.33.34/api/v2/inventories/?name=tec_inv" 
+          url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" 
           body_format: json
           method: GET
           user: admin
@@ -15,3 +15,8 @@
         register: response    
       - debug:
           var: response.json.results[0].id 
+
+      - name: "Required master inventory id"
+        set_fact:
+          master_inventory_id: "{{ response.json.results[0].id }}"
+             
