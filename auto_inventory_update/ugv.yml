@@ -8,7 +8,7 @@
         user: admin
         password: divya921997
         method: PUT
-        body: '{ hello  }'
+        body: '{ "hello"  }'
         force_basic_auth: yes
         status_code: 200
         body_format: json
