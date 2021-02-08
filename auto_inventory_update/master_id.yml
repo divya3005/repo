@@ -7,16 +7,16 @@
           url: "{{ instance_name }}/api/v2/inventories/?name=tec_inv" #{{ inventory_name}}
           body_format: json
           method: GET
-          user: admin
-          password: divya921997
+          user: "{{ tower_username }}"
+          password: "{{ tower_password }}"
           force_basic_auth: true
           return_content: true
           status_code: 200 
-        register: response    
+        register: master_inv_id   
       - debug:
-          var: response.json.results[0].id 
+          var: master_inv_id.json.results[0].id 
 
       - name: "Required master inventory id"
         set_fact:
-          inventory_id: "{{ response.json.results[0].id }}"
+          inventory_id: "{{ master_inv_id.json.results[0].id }}"
              
