@@ -18,5 +18,5 @@
 
       - name: "Required master inventory id"
         set_fact:
-          master_inventory_id: "{{ response.json.results[0].id }}"
+          inventory_id: "{{ response.json.results[0].id }}"
              
