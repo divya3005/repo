@@ -2,7 +2,7 @@
 - hosts: localhost
   connection: local
   tasks:
-      - name: "Fetch the Group ID's"
+      - name: "Fetch the Inventory id"
         uri:
           url: "http://192.168.33.34/api/v2/inventories/?name=tec_inv" 
           body_format: json
