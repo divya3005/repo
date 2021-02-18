@@ -17,7 +17,8 @@
    - block:
       - set_fact:
           location_proxy: "{{loc_proxy_prefix}}{{ locations[ region ].value }}"
-        when: region is defined and region != ""  
+        when: region is defined and region != "" 
+        ignore_errors: true 
       - name: Identify the environment details
         set_fact:
           grp_env: "{{env_prefix}}production"
