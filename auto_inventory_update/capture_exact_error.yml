@@ -5,6 +5,8 @@
       tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
       tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
       ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
+      ticket_full_description: ""
+
   
   tasks:
    - name: Inlcude the Group Details
