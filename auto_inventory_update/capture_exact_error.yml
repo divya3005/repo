@@ -135,28 +135,25 @@
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: inv_Groups[os_type] is undefined  
           set_fact:
-             ticket_full_description: " @location_proxy is missing Please refer the Job for more details. 
+            ticket_full_description: " @location_proxy is missing Please refer the Job for more details. 
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: location_proxy is undefined  
           set_fact:
-             ticket_full_description: " @grp_env is missing Please refer the Job for more details. 
+            ticket_full_description: " @grp_env is missing Please refer the Job for more details. 
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: grp_env is undefined
           set_fact:
-             ticket_full_description: " @inv_Groups[os_type] and @location_proxy is missing Please refer the Job for more details. 
+            ticket_full_description: " @inv_Groups[os_type] and @location_proxy is missing Please refer the Job for more details. 
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: inv_Groups[os_type] is undefined and location_proxy is undefined 
           set_fact:
-             ticket_full_description: " @inv_Groups[os_type] and @grp_env is missing Please refer the Job for more details. 
+            ticket_full_description: " @inv_Groups[os_type] and @grp_env is missing Please refer the Job for more details. 
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: inv_Groups[os_type] is undefined and grp_env is undefined 
           set_fact:
-             ticket_full_description: " @grp_env and @location_proxy is missing Please refer the Job for more details. 
+            ticket_full_description: " @grp_env and @location_proxy is missing Please refer the Job for more details. 
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
           when: location_proxy is undefined and grp_env is undefined 
-          set_fact:
-             ticket_full_description: " @inv_Groups[os_type] and @location_proxy and @grp_env is missing Please refer the Job for more details. 
-                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
-          when: inv_Groups[os_type] is undefined and location_proxy is undefined and grp_env is undefined
+          
                                        
      when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
