@@ -1,0 +1,162 @@
+--- 
+- hosts: localhost
+  connection: local
+  vars:
+      tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
+      tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'  
+  tasks:
+   - name: Inlcude the Group Details
+     include_vars: 
+      file: inventorygroups.json
+      name: inv_Groups 
+ 
+   - name: Inlcude the vars
+     include_vars: inputs.yml
+   - block:
+      - set_fact:
+          location_proxy: "{{loc_proxy_prefix}}{{ locations[ region ].value }}"
+        when: region is defined and region != ""  
+      - name: Identify the environment details
+        set_fact:
+          grp_env: "{{env_prefix}}production"
+        when: host_name|int > 0 and host_name|int <= 400  
+
+      - name: Identify the environment details
+        set_fact:
+          grp_env: "{{env_prefix}}non_production"
+        when: host_name|int > 400         
+
+      - name: Group all the inventory
+        set_fact:
+          inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
+        when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
+
+      - name: "Fetch the master inventory id"
+        uri:
+          url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
+          body_format: json
+          method: GET
+          user: "{{ tower_username }}"
+          password: "{{ tower_password }}"
+          force_basic_auth: true
+          return_content: true
+          status_code: 200 
+        register: master_inv_id
+           
+      - name: "Required master inventory id"
+        set_fact:
+          inventory_id: "{{ master_inv_id.json.results[0].id }}"
+          
+      - name: "Validate if the hosts already exist in Inventory"
+        uri:
+          url: "{{ instance_name }}/api/v2/inventories/{{ inventory_id }}/hosts/?&name={{ fqdn }}" 
+          body_format: json
+          method: GET
+          user: "{{ tower_username }}"
+          password: "{{ tower_password }}"
+          force_basic_auth: true
+          return_content: true
+          status_code: 200  
+          validate_certs: no 
+        register: response_hostId
+        when: inventory_id is defined and inventory_id != ""
+     
+      - name: "Validate if hosts exist and poluate the api url"
+        set_fact:
+          api_link: "{{ response_hostId.json.results[0].related.variable_data }}"
+        when: response_hostId.json.count | int > 0
+
+      - block: 
+          - name: "Fetch the Group ID's"
+            uri:
+              url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
+              body_format: json
+              method: GET
+              user: "{{ tower_username }}"
+              password: "{{ tower_password }}"
+              force_basic_auth: true
+              return_content: true
+              status_code: 200  
+              validate_certs: no 
+            loop: "{{ inv_groups }}"
+            loop_control:
+                loop_var: group_name  
+            register: response_groupId    
+
+          - name : "Create & Update Ansible Tower Inventory with new hosts & Groups"
+            uri:
+              url: "{{ instance_name }}/api/v2/groups/{{ inv_groupsId }}/hosts/"  
+              body_format: json
+              method: POST
+              user: "{{ tower_username }}"
+              password: "{{ tower_password }}"
+              force_basic_auth: true
+              body: '{ "name" : "{{ fqdn }}" , "description" : "Uploaded from VRO" }'
+              validate_certs: no  
+              status_code: 201,204 
+            register: inv_update 
+            loop: "{{ response_groupId | json_query('results[].json.results[*].id') | flatten(1) }}"
+            loop_control:
+               loop_var: inv_groupsId
+            when: response_groupId is defined
+
+          - name: "Validate if hosts exist and poluate the api urs"
+            set_fact:
+              api_link: "{{ inv_update.results[0].json.related.variable_data }}"
+            when: response_hostId.json.count | int == 0 
+              
+          - name: Update the Host Variables 
+            uri:
+              url: "{{ instance_name }}{{ api_link }}"
+              user: "{{ tower_username }}"
+              password: "{{ tower_password }}"
+              method: PUT
+              body: '{ "ansible_host": "{{ ansible_host }}" , 
+                          "devicetype" : "{{ devicetype }}" , 
+                          "ostype": "{{ os_type }}" ,
+                          "tier" : "{{ tier }}",
+                          "ipaddress" : "{{ ansible_host }}" ,
+                          "fqdn" : "{{ fqdn }}" }'
+              force_basic_auth: yes
+              status_code: 200
+              body_format: json
+              validate_certs: no
+            when: api_link is defined
+        when: inv_groups is defined
+     ignore_errors: true
+   
+   - name: CREATE TICKET
+     include_role:
+        name: create_ticket
+     vars:
+          ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
+          set_fact:
+             ticket_full_description: " @inv_Groups[os_type] is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: inv_Groups[os_type] is undefined  
+          set_fact:
+             ticket_full_description: " @location_proxy is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: location_proxy is undefined  
+          set_fact:
+             ticket_full_description: " @grp_env is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: grp_env is undefined
+          set_fact:
+             ticket_full_description: " @inv_Groups[os_type] and @location_proxy is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: inv_Groups[os_type] is undefined and location_proxy is undefined 
+          set_fact:
+             ticket_full_description: " @inv_Groups[os_type] and @grp_env is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: inv_Groups[os_type] is undefined and grp_env is undefined 
+          set_fact:
+             ticket_full_description: " @grp_env and @location_proxy is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: location_proxy is undefined and grp_env is undefined 
+          set_fact:
+             ticket_full_description: " @inv_Groups[os_type] and @location_proxy and @grp_env is missing Please refer the Job for more details. 
+                                    {{instance_name}}/#/jobs/playbook/{{tower_job_id }} "
+          when: inv_Groups[os_type] is undefined and location_proxy is undefined and grp_env is undefined
+                                       
+     when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
