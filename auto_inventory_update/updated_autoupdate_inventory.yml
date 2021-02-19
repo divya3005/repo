@@ -78,8 +78,7 @@
         set_fact:
           api_link: "{{ response_hostId.json.results[0].related.variable_data }}"
         when: response_hostId.json.count | int > 0
-      - debug:
-          var: response_hostId  
+        
 
       - block: 
           - name: "Fetch the Group ID's"
