@@ -10,8 +10,15 @@ tkt_assignment_group: "ibm-ss-wintel team"
 locations:
   AMER:
     value: chicago
+  Winston Salem Proxy:
+    value: Chigaco
+  tempe:
+    value: Chigaco
+  Ashaway:
+    value: Chigaco
+  Charlotte:
+    value: Chigaco 
   EMEA:
     value: frankfurt
   APAC:
     value: japan
-               
