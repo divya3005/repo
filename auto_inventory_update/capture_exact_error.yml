@@ -144,7 +144,7 @@
      when: grp_env is undefined
    - name: CREATE TICKET
      include_role:
-         name: create_ticket
-      vars:
-        ticket_full_description: "{{ ticket_full_description }}"
+      name: create_ticket
+     vars:
+          ticket_full_description: "{{ ticket_full_description }}"
      when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
