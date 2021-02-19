@@ -5,7 +5,7 @@ master_inventory: "tec_inv"
 host_name: "{{ fqdn.split('.')[0][-3:] }}"
 snow_impact: "3"
 snow_urgency: "3"
-tkt_assignment_group: "Ansible-Support"
+tkt_assignment_group: "ibm-ss-wintel team"
 
 locations:
   AMER:
