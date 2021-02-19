@@ -4,7 +4,7 @@
   vars:
       tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
       tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
-      ticket_short_description: "Create/Update host {{ fqdn }} failed in Ansible Inventory "
+      ticket_short_description: "Create/Update failed for host {{ fqdn }} in Ansible Inventory "
       ticket_description: "Inputs provided to Playbook \n ------------------------------------------------------ \n ansible_host: {{ansible_host }} \n fqdn: {{ fqdn }} \n os_type: {{ os_type }} \n region: {{ region }} \n  tier: {{ tier }} \n ------------------------------------------------------------------- \n Inventory Upload got failed because of the following invalid inputs \n "  
   tasks:
    - name: Inlcude the Group Details
