@@ -4,8 +4,8 @@
   vars:
       tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
       tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
-      #ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
-      #ticket_full_description: ""
+      ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
+      ticket_full_description: ""
 
   
   tasks:
@@ -133,9 +133,9 @@
     - name: CREATE TICKET
       include_role:
       name: create_ticket
-      vars:
-        ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
-        ticket_full_description: ""
+      #vars:
+        #ticket_short_description: "Unable to Create/Update host {{ fqdn }} in Ansible Inventory "
+        #ticket_full_description: ""
       - name: "checking if location_proxy is missing"
         set_fact:
           ticket_full_description: "{{ ticket_full_description }} @location_proxy is missing "
