@@ -11,13 +11,13 @@ locations:
   AMER:
     value: chicago
   Winston Salem Proxy:
-    value: Chigaco
+    value: chigaco
   tempe:
-    value: Chigaco
+    value: chigaco
   Ashaway:
-    value: Chigaco
+    value: chigaco
   Charlotte:
-    value: Chigaco 
+    value: chigaco 
   EMEA:
     value: frankfurt
   APAC:
