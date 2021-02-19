@@ -4,8 +4,8 @@
   vars:
       tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
       tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
-      ticket_short_description: "Create/Update failed for host {{ fqdn }} in Ansible Inventory "
-      ticket_description: "Inputs provided to Playbook \n ------------------------------------------------------ \n ansible_host: {{ansible_host }} \n fqdn: {{ fqdn }} \n os_type: {{ os_type }} \n region: {{ region }} \n  tier: {{ tier }} \n ------------------------------------------------------------------- \n Inventory Upload got failed because of the following invalid inputs \n "  
+      ticket_short_description: "Create/Update failed on host \'{{ fqdn }}\' in Ansible Inventory "
+      ticket_description: "Inputs provided to Playbook \n ------------------------------------------------------ \n ansible_host: \'{{ansible_host }}\' \n fqdn: \'{{ fqdn }}\' \n os_type: \'{{ os_type }}\' \n region: {{ region }} \n  tier: {{ tier }} \n ------------------------------------------------------------------- \n Inventory Upload got failed because of the following invalid inputs \n "  
   tasks:
    - name: Inlcude the Group Details
      include_vars: 
@@ -34,15 +34,15 @@
         when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
       - name: "checking if location_proxy is missing"
         set_fact:
-            ticket_description: "{{ ticket_description }} Region - {{ region }} is invalid \n"
+            ticket_description: "{{ ticket_description }} Region - \'{{ region }}\' is invalid \n"
         when: location_proxy is undefined    
       - name: "checking if inv_Groups[os_type] is missing"
         set_fact:
-            ticket_description: " {{ ticket_description }} No Groups are associated with this os_type - {{ os_type }} \n"
+            ticket_description: " {{ ticket_description }} No Groups are associated with this os_type - \'{{ os_type }}\' \n"
         when: inv_Groups[os_type] is undefined 
       - name: "checking if grp_env is missing"
         set_fact:
-            ticket_description: "{{ ticket_description }} Environment Details  - {{ host_name }}  is not defined as per standards \n"
+            ticket_description: "{{ ticket_description }} Environment Details  - \'{{ host_name }}\'  is not defined as per standards \n"
         when: grp_env is undefined
       - name: "Fetch the master inventory id"
         uri:
@@ -142,6 +142,6 @@
      include_role:
         name: create_ticket
      vars:
-        ticket_full_description: "{{ ticket_description }} -------------------------------------------------------------------- \n For more details,Please refer the Logs available at \n
+        ticket_full_description: "{{ ticket_description }} -------------------------------------------------------------------- \n For more details,Please refer the Log available at \n
                                     {{instance_name}}/#/jobs/playbook/{{tower_job_id }}"                        
      when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
