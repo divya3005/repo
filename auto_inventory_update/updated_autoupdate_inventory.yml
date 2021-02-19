@@ -114,7 +114,7 @@
                loop_var: inv_groupsId
             when: response_groupId is defined
 
-          - name: "Validate if hosts exist and poluate the api urs"
+          - name: "Validate if hosts exist and poluate the api url"
             set_fact:
               api_link: "{{ inv_update.results[0].json.related.variable_data }}"
             when: response_hostId.json.count | int == 0 
