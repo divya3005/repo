@@ -132,19 +132,19 @@
    #- block:
    - name: "checking if location_proxy is missing"
      set_fact:
-        ticket_full_description: "{{ ticket_full_description }} @location_proxy is missing "
+        ticket_full_description: "{{ ticket_description }} @location_proxy is missing "
      when: location_proxy is undefined    
    - name: "checking if inv_Groups[os_type] is missing"
      set_fact:
-        ticket_full_description: " {{ ticket_full_description }} @inv_Groups[os_type] is missing "
+        ticket_full_description: " {{ ticket_description }} @inv_Groups[os_type] is missing "
      when: inv_Groups[os_type] is undefined 
    - name: "checking if grp_env is missing"
      set_fact:
-        ticket_full_description: "{{ ticket_full_description }} @grp_env is missing "
+        ticket_full_description: "{{ ticket_description }} @grp_env is missing "
      when: grp_env is undefined
    - name: CREATE TICKET
      include_role:
       name: create_ticket
      vars:
-          ticket_full_description: "{{ ticket_full_description }}"
+          ticket_description: "{{ ticket_full_description }}"
      when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
