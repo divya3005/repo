@@ -139,14 +139,14 @@
    - name: "checking if location_proxy is missing"
      set_fact:
         ticket_full_description: "{{ ticket_full_description }} @location_proxy is missing "
-      when: location_proxy is undefined    
+     when: location_proxy is undefined    
    - name: "checking if inv_Groups[os_type] is missing"
      set_fact:
         ticket_full_description: " {{ ticket_full_description }} @inv_Groups[os_type] is missing "
-      when: inv_Groups[os_type] is undefined 
+     when: inv_Groups[os_type] is undefined 
    - name: "checking if grp_env is missing"
      set_fact:
         ticket_full_description: "{{ ticket_full_description }} @grp_env is missing "
-      when: grp_env is undefined
+     when: grp_env is undefined
 
      #when: inv_Groups[os_type] is undefined or location_proxy is undefined or grp_env is undefined
