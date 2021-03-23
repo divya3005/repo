@@ -30,17 +30,17 @@
      set_fact:
         inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
      when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
-  - name: "Fetch the master inventory id"
-    uri:
-      url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
-      body_format: json
-      method: GET
-      user: "{{ tower_username }}"
-      password: "{{ tower_password }}"
-      force_basic_auth: true
-      return_content: true
-      status_code: 200 
-    register: master_inv_id
+   - name: "Fetch the master inventory id"
+     uri:
+       url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
+       body_format: json
+       method: GET
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: true
+       return_content: true
+       status_code: 200 
+     register: master_inv_id
            
     - name: "Required master inventory id"
       set_fact:
