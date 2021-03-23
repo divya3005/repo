@@ -29,7 +29,7 @@
    - name: Group all the inventory
      set_fact:
         inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
-      when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
+     when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
     - name: "Fetch the master inventory id"
       uri:
         url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
