@@ -1,0 +1,65 @@
+--- 
+- hosts: localhost
+  connection: local
+  vars:
+      tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
+      tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
+  tasks:
+   - name: Inlcude the Group Details
+     include_vars: 
+      file: inventorygroups.json
+      name: inv_Groups 
+   - name: Inlcude the vars
+     include_vars: inputs.yml
+   - set_fact:
+          location_proxy: "{{loc_proxy_prefix}}{{ locations[ region ].value }}"
+     when: region is defined and region != "" 
+   - debug:
+        var: location_proxy
+       
+   - name: Identify the environment details
+        set_fact:
+          grp_env: "{{env_prefix}}production"
+        when: host_name|int > 0 and host_name|int <= 400  
+
+      - name: Identify the environment details
+        set_fact:
+          grp_env: "{{env_prefix}}non_production"
+        when: host_name|int > 400         
+
+      - name: Group all the inventory
+        set_fact:
+          inv_groups: "{{ inv_Groups[os_type]+ [ '{{ location_proxy }}' ] + [ '{{ grp_env }}' ] }}"
+        when: inv_Groups[os_type] is defined and location_proxy is defined and grp_env is defined
+      - name: "Fetch the master inventory id"
+        uri:
+          url: "{{ instance_name }}/api/v2/inventories/?name={{ master_inventory }}" 
+          body_format: json
+          method: GET
+          user: "{{ tower_username }}"
+          password: "{{ tower_password }}"
+          force_basic_auth: true
+          return_content: true
+          status_code: 200 
+        register: master_inv_id
+           
+      - name: "Required master inventory id"
+        set_fact:
+          inventory_id: "{{ master_inv_id.json.results[0].id }}"
+      - name: "Fetch the Group ID's"
+            uri:
+              url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
+              body_format: json
+              method: GET
+              user: "{{ tower_username }}"
+              password: "{{ tower_password }}"
+              force_basic_auth: true
+              return_content: true
+              status_code: 200  
+              validate_certs: no 
+            loop: "{{ inv_groups }}"
+            loop_control:
+                loop_var: group_name  
+            register: response_groupId    
+       - debug:
+              var: response_groupId                        
