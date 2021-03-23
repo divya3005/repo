@@ -42,23 +42,23 @@
        status_code: 200 
      register: master_inv_id
            
-    - name: "Required master inventory id"
-      set_fact:
+   - name: "Required master inventory id"
+     set_fact:
         inventory_id: "{{ master_inv_id.json.results[0].id }}"
-    - name: "Fetch the Group ID's"
-      uri:
-        url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
-        body_format: json
-        method: GET
-        user: "{{ tower_username }}"
-        password: "{{ tower_password }}"
-        force_basic_auth: true
-        return_content: true
-        status_code: 200  
-        validate_certs: no 
-      loop: "{{ inv_groups }}"
-      loop_control:
-          loop_var: group_name  
-      register: response_groupId    
+   - name: "Fetch the Group ID's"
+     uri:
+      url: "{{ instance_name }}/api/v2/groups/?inventory={{ inventory_id }}&name={{ group_name }}" 
+      body_format: json
+      method: GET
+      user: "{{ tower_username }}"
+      password: "{{ tower_password }}"
+      force_basic_auth: true
+      return_content: true
+      status_code: 200  
+      validate_certs: no 
+     loop: "{{ inv_groups }}"
+     loop_control:
+        loop_var: group_name  
+     register: response_groupId    
     - debug:
-          var: response_groupId                        
+        var: response_groupId                        
