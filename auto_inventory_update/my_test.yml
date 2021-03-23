@@ -60,5 +60,5 @@
      loop_control:
         loop_var: group_name  
      register: response_groupId    
-    - debug:
-        var: response_groupId                        
+   - debug:
+       var: response_groupId                        
