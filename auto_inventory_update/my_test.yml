@@ -19,7 +19,7 @@
    - name: Identify the environment details
      set_fact:
         grp_env: "{{env_prefix}}production"
-      when: host_name|int > 0 and host_name|int <= 400  
+     when: host_name|int > 0 and host_name|int <= 400  
 
    - name: Identify the environment details
      set_fact:
